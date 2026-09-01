@@ -1,0 +1,1524 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Taylor's Kitchen</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:15px;line-height:1.6;background:#fff;color:#1f2328}
+header{background:#1f2328;color:#fff;padding:36px 24px 28px;text-align:center}
+header h1{font-size:2.2rem;font-weight:700;letter-spacing:-0.5px}
+header p{color:#adb5bd;font-size:1rem;margin-top:6px}
+.toc{background:#f7f8fa;border-bottom:1px solid #e5e7eb;padding:14px 24px;text-align:center}
+.toc a{display:inline-block;margin:4px 6px;padding:6px 16px;border:1px solid #e5e7eb;border-radius:20px;font-size:13px;color:#1f2328;text-decoration:none;background:#fff}
+.toc a:hover{background:#3b82d4;color:#fff;border-color:#3b82d4}
+main{max-width:800px;margin:0 auto;padding:36px 20px 60px}
+.category-heading{font-size:1.5rem;font-weight:700;border-left:5px solid #3b82d4;padding-left:14px;margin:52px 0 24px;color:#1f2328}
+.category-heading:first-of-type{margin-top:0}
+.recipe{background:#f7f8fa;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:32px;overflow:hidden}
+
+/* Recipe image */
+.recipe-img{width:100%;height:180px;object-fit:cover;display:block;border-bottom:1px solid #e5e7eb}
+.recipe-img-placeholder{width:100%;height:180px;display:flex;align-items:center;justify-content:center;font-size:3rem;border-bottom:1px solid #e5e7eb}
+
+.recipe-header{padding:18px 22px 12px;background:#fff}
+.recipe-header h2{font-size:1.1rem;font-weight:700;margin-bottom:4px}
+.recipe-meta{font-size:13px;color:#57606a;display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:6px}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:.5px}
+.tag-breakfast{background:#fef3c7;color:#92400e}
+.tag-chicken{background:#dbeafe;color:#1d4ed8}
+.tag-beef{background:#fee2e2;color:#b91c1c}
+.tag-seafood{background:#d1fae5;color:#065f46}
+.tag-pasta{background:#ede9fe;color:#5b21b6}
+.tag-vegetarian{background:#dcfce7;color:#166534}
+.tag-pork{background:#fce7f3;color:#9d174d}
+.tag-dessert{background:#f3e8ff;color:#6d28d9}
+.recipe-desc{padding:12px 22px;font-size:13.5px;color:#57606a;border-bottom:1px solid #e5e7eb;background:#fff}
+
+/* Rating + Made it bar */
+.recipe-actions{display:flex;align-items:center;justify-content:space-between;padding:10px 22px;background:#fff;border-bottom:1px solid #e5e7eb;flex-wrap:wrap;gap:8px}
+.star-rating{display:flex;align-items:center;gap:4px;font-size:13px;color:#57606a}
+.stars{display:flex;gap:2px}
+.star{font-size:20px;color:#e5e7eb;cursor:default}
+.star.filled{color:#f59e0b}
+.made-it{display:flex;align-items:center;gap:8px;font-size:13px;color:#57606a}
+.made-it input[type=checkbox]{width:16px;height:16px;accent-color:#3b82d4;cursor:pointer}
+.made-it label{cursor:pointer;user-select:none}
+
+/* Cost badge */
+.cost-badge{background:#ecfdf5;color:#065f46;border:1px solid #6ee7b7;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:600;margin:0 22px 14px;display:inline-block}
+
+/* Body grid */
+.recipe-body{display:grid;grid-template-columns:1fr 1.6fr;gap:0}
+.ingredients,.instructions{padding:16px 22px}
+.ingredients{border-right:1px solid #e5e7eb}
+.recipe-body h3{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#3b82d4;margin-bottom:10px}
+.ingredients table{width:100%;border-collapse:collapse;font-size:12.5px}
+.ingredients table th{text-align:left;font-weight:600;color:#57606a;padding:4px 0;border-bottom:1px solid #e5e7eb;font-size:11px;text-transform:uppercase}
+.ingredients table td{padding:5px 0;border-bottom:1px solid #f0f0f0;vertical-align:top}
+.ingredients table td:last-child{text-align:right;color:#065f46;font-weight:600;white-space:nowrap;padding-left:8px}
+.ingredients table tr:last-child td{border-bottom:none}
+.instructions ol{padding-left:18px}
+.instructions ol li{font-size:13px;margin-bottom:7px;line-height:1.55;color:#1f2328}
+
+/* Nutrition */
+.nutrition-bar{background:#fff;border-top:1px solid #e5e7eb;padding:14px 22px}
+.nutrition-bar h3{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#3b82d4;margin-bottom:10px}
+.nutrition-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.nutrition-item{background:#f7f8fa;border:1px solid #e5e7eb;border-radius:8px;padding:8px 6px;text-align:center}
+.nutrition-item .nut-val{font-size:1rem;font-weight:700;color:#1f2328}
+.nutrition-item .nut-label{font-size:10px;color:#57606a;text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+
+hr.divider{border:none;border-top:2px solid #e5e7eb;margin:52px 0 0}
+
+@media(max-width:580px){
+  .recipe-body{grid-template-columns:1fr}
+  .ingredients{border-right:none;border-bottom:1px solid #e5e7eb}
+  .nutrition-grid{grid-template-columns:repeat(3,1fr)}
+  header h1{font-size:1.6rem}
+  .recipe-actions{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Taylor's Kitchen</h1>
+  <p>Home-cooked recipes the whole family will love</p>
+</header>
+
+<div class="toc">
+  <a href="#breakfast">Healthy Breakfast</a>
+  <a href="#lunch-dinner">Lunch &amp; Dinner</a>
+  <a href="#desserts">Desserts</a>
+</div>
+
+<main>
+
+
+<h2 class="category-heading" id="breakfast">Healthy Breakfast</h2>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fef9c3">🥚</div>
+  <div class="recipe-header">
+    <h2>Veggie Egg White Omelette</h2>
+    <div class="recipe-meta"><span>⏱ 15 min</span><span>Serves 1</span><span class="tag tag-breakfast">Breakfast</span></div>
+  </div>
+  <div class="recipe-desc">A fluffy, protein-packed egg white omelette stuffed with sautéed spinach, mushrooms, and bell peppers. Light, satisfying, and under 200 calories.</div>
+  <div class="recipe-actions">
+    <div class="star-rating">
+      <span>Your Rating:</span>
+      <div class="stars">
+        <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+      </div>
+    </div>
+    <div class="made-it"><input type="checkbox" id="made-b1" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$3.50</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>4 large egg whites</td><td>$0.80</td></tr>
+        <tr><td>1/2 cup baby spinach</td><td>$0.30</td></tr>
+        <tr><td>1/4 cup mushrooms, sliced</td><td>$0.40</td></tr>
+        <tr><td>1/4 cup bell pepper, diced</td><td>$0.35</td></tr>
+        <tr><td>2 tbsp onion, diced</td><td>$0.10</td></tr>
+        <tr><td>1 tsp olive oil</td><td>$0.10</td></tr>
+        <tr><td>Salt, pepper, herbs</td><td>$0.05</td></tr>
+        <tr><td>1 tbsp feta cheese (opt)</td><td>$0.40</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Heat olive oil in a nonstick pan over medium heat. Sauté onion, bell pepper, and mushrooms 3–4 minutes until softened. Add spinach and cook 1 minute until wilted. Season and set aside.</li>
+        <li>Whisk egg whites with a pinch of salt and pepper until slightly frothy.</li>
+        <li>Wipe the pan clean and spray lightly with cooking spray over medium-low heat. Pour in egg whites and let set for 1–2 minutes.</li>
+        <li>Spoon veggie filling onto one half of the omelette. Sprinkle with feta if using.</li>
+        <li>Fold the omelette in half and slide onto a plate. Serve immediately.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">145</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">22g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">6g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">4g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">2g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">320mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#d1fae5">🥤</div>
+  <div class="recipe-header">
+    <h2>Green Power Smoothie</h2>
+    <div class="recipe-meta"><span>⏱ 5 min</span><span>Serves 1</span><span class="tag tag-breakfast">Breakfast</span></div>
+  </div>
+  <div class="recipe-desc">Loaded with spinach, banana, and Greek yogurt, this vibrant green smoothie is creamy, naturally sweet, and packed with nutrients to start your day right.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-b2" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$2.80</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>1 cup fresh baby spinach</td><td>$0.40</td></tr>
+        <tr><td>1 frozen banana</td><td>$0.25</td></tr>
+        <tr><td>1/2 cup Greek yogurt (plain)</td><td>$0.70</td></tr>
+        <tr><td>1/2 cup unsweetened almond milk</td><td>$0.30</td></tr>
+        <tr><td>1 tbsp almond butter</td><td>$0.40</td></tr>
+        <tr><td>1 tsp honey</td><td>$0.10</td></tr>
+        <tr><td>1/2 cup ice</td><td>$0.05</td></tr>
+        <tr><td>1 tbsp chia seeds (opt)</td><td>$0.25</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Add spinach and almond milk to the blender first — blending greens with liquid first ensures a smoother result.</li>
+        <li>Add frozen banana, Greek yogurt, almond butter, and honey.</li>
+        <li>Add ice and chia seeds if using.</li>
+        <li>Blend on high for 60 seconds until completely smooth and creamy.</li>
+        <li>Pour into a glass and serve immediately.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">310</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">18g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">38g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">9g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">5g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">115mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#ecfdf5">🥑</div>
+  <div class="recipe-header">
+    <h2>Avocado Toast with Poached Egg</h2>
+    <div class="recipe-meta"><span>⏱ 15 min</span><span>Serves 1</span><span class="tag tag-breakfast">Breakfast</span></div>
+  </div>
+  <div class="recipe-desc">Creamy smashed avocado on hearty whole grain toast, topped with a perfectly poached egg and a sprinkle of red pepper flakes. A breakfast that fuels the whole morning.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-b3" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$3.20</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>2 slices whole grain bread</td><td>$0.40</td></tr>
+        <tr><td>1 ripe avocado</td><td>$1.00</td></tr>
+        <tr><td>2 large eggs</td><td>$0.70</td></tr>
+        <tr><td>1 tbsp lemon juice</td><td>$0.10</td></tr>
+        <tr><td>Salt and black pepper</td><td>$0.05</td></tr>
+        <tr><td>Red pepper flakes</td><td>$0.05</td></tr>
+        <tr><td>Everything bagel seasoning (opt)</td><td>$0.10</td></tr>
+        <tr><td>1 tsp white vinegar (for poaching)</td><td>$0.05</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Toast bread to your liking.</li>
+        <li>Mash avocado with lemon juice, salt, and pepper until smooth but slightly chunky. Spread over toast.</li>
+        <li>Bring a small pot of water to a gentle simmer. Add vinegar. Create a gentle swirl with a spoon.</li>
+        <li>Crack each egg into a small cup and gently slide into the water. Poach 3–4 minutes until whites are set but yolk is still runny.</li>
+        <li>Remove eggs with a slotted spoon and place on top of the avocado toast.</li>
+        <li>Season with salt, pepper, red pepper flakes, and bagel seasoning if using. Serve immediately.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">420</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">18g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">32g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">26g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">9g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">390mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fdf2f8">🫐</div>
+  <div class="recipe-header">
+    <h2>Berry Protein Smoothie Bowl</h2>
+    <div class="recipe-meta"><span>⏱ 10 min</span><span>Serves 1</span><span class="tag tag-breakfast">Breakfast</span></div>
+  </div>
+  <div class="recipe-desc">A thick, vibrant açaí-style bowl blended with mixed berries and protein powder, topped with crunchy granola, fresh fruit, and honey. Beautiful and nutritious.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-b4" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$4.50</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>1 cup frozen mixed berries</td><td>$1.00</td></tr>
+        <tr><td>1/2 frozen banana</td><td>$0.15</td></tr>
+        <tr><td>1 scoop vanilla protein powder</td><td>$1.00</td></tr>
+        <tr><td>1/4 cup almond milk</td><td>$0.15</td></tr>
+        <tr><td>1/3 cup granola</td><td>$0.50</td></tr>
+        <tr><td>Fresh strawberries &amp; blueberries</td><td>$0.80</td></tr>
+        <tr><td>1 tbsp honey</td><td>$0.15</td></tr>
+        <tr><td>1 tbsp coconut flakes (opt)</td><td>$0.20</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Blend frozen berries, frozen banana, protein powder, and almond milk until very thick and smooth. Use minimal liquid — the bowl should be thick enough to eat with a spoon.</li>
+        <li>Pour into a wide bowl.</li>
+        <li>Arrange granola, fresh berries, and coconut flakes in rows across the top.</li>
+        <li>Drizzle with honey and serve immediately.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">390</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">28g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">55g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">7g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">8g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">140mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fff7ed">🌾</div>
+  <div class="recipe-header">
+    <h2>Overnight Oats with Berries &amp; Chia</h2>
+    <div class="recipe-meta"><span>⏱ 5 min + overnight</span><span>Serves 1</span><span class="tag tag-breakfast">Breakfast</span></div>
+  </div>
+  <div class="recipe-desc">Prep this the night before and wake up to a creamy, ready-to-eat breakfast. Rolled oats soaked in almond milk with chia seeds, topped with fresh berries.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-b5" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$2.50</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>1/2 cup rolled oats</td><td>$0.20</td></tr>
+        <tr><td>3/4 cup unsweetened almond milk</td><td>$0.45</td></tr>
+        <tr><td>1 tbsp chia seeds</td><td>$0.25</td></tr>
+        <tr><td>1/2 cup Greek yogurt</td><td>$0.70</td></tr>
+        <tr><td>1 tbsp maple syrup or honey</td><td>$0.15</td></tr>
+        <tr><td>1/2 tsp vanilla extract</td><td>$0.05</td></tr>
+        <tr><td>Fresh berries for topping</td><td>$0.60</td></tr>
+        <tr><td>1 tbsp almond butter (opt)</td><td>$0.40</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>In a jar or container with a lid, combine oats, almond milk, chia seeds, Greek yogurt, maple syrup, and vanilla. Stir well.</li>
+        <li>Seal and refrigerate overnight (at least 6 hours).</li>
+        <li>In the morning, stir the oats. If too thick, add a splash of almond milk.</li>
+        <li>Top with fresh berries and a drizzle of almond butter. Eat cold or warm in the microwave for 90 seconds.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">380</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">19g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">48g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">10g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">9g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">130mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<h2 class="category-heading" id="lunch-dinner">Lunch &amp; Dinner</h2>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fef9c3">🍗</div>
+  <div class="recipe-header">
+    <h2>Garlic Butter Chicken Thighs</h2>
+    <div class="recipe-meta"><span>⏱ 35 min</span><span>Serves 4</span><span class="tag tag-chicken">Chicken</span></div>
+  </div>
+  <div class="recipe-desc">Juicy, pan-seared thighs finished in a rich garlic herb butter sauce. Quick enough for a weeknight, impressive enough for guests.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-ld1" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$12.00 (~$3.00/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>6 bone-in, skin-on chicken thighs</td><td>$6.50</td></tr>
+        <tr><td>4 tbsp unsalted butter</td><td>$0.60</td></tr>
+        <tr><td>5 cloves garlic, minced</td><td>$0.30</td></tr>
+        <tr><td>1 tbsp olive oil</td><td>$0.15</td></tr>
+        <tr><td>1 tsp fresh thyme</td><td>$0.20</td></tr>
+        <tr><td>1 tsp fresh rosemary</td><td>$0.20</td></tr>
+        <tr><td>Juice of 1/2 lemon</td><td>$0.25</td></tr>
+        <tr><td>Salt, pepper, parsley</td><td>$0.10</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Pat chicken thighs dry and season generously with salt and pepper on both sides.</li>
+        <li>Heat olive oil in a large oven-safe skillet over medium-high heat. Sear skin-side down 6–7 minutes until golden and crispy.</li>
+        <li>Flip and sear the other side 3 minutes. Remove and set aside.</li>
+        <li>Reduce heat to medium. Add butter and garlic; cook 1 minute until fragrant.</li>
+        <li>Stir in thyme and rosemary. Return chicken, spooning butter over the top.</li>
+        <li>Cover and cook over medium-low 12–15 minutes until internal temp reaches 165°F.</li>
+        <li>Squeeze lemon over top, garnish with parsley, and serve.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">410</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">34g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">2g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">29g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">0g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">420mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fff7ed">🍽️</div>
+  <div class="recipe-header">
+    <h2>Creamy Tuscan Chicken</h2>
+    <div class="recipe-meta"><span>⏱ 30 min</span><span>Serves 4</span><span class="tag tag-chicken">Chicken</span></div>
+  </div>
+  <div class="recipe-desc">Sun-dried tomatoes, spinach, and a silky parmesan cream sauce make this an instant classic. Serve over pasta or mashed potatoes.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-ld2" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$16.00 (~$4.00/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>4 boneless chicken breasts</td><td>$7.00</td></tr>
+        <tr><td>1/2 cup sun-dried tomatoes</td><td>$1.50</td></tr>
+        <tr><td>1 1/2 cups heavy cream</td><td>$1.80</td></tr>
+        <tr><td>3/4 cup parmesan, grated</td><td>$1.50</td></tr>
+        <tr><td>2 cups baby spinach</td><td>$0.80</td></tr>
+        <tr><td>4 cloves garlic</td><td>$0.25</td></tr>
+        <tr><td>1/2 cup chicken broth</td><td>$0.40</td></tr>
+        <tr><td>Olive oil, seasonings</td><td>$0.30</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Season chicken with salt, pepper, and Italian seasoning. Sear in olive oil 5–6 min per side until golden. Set aside.</li>
+        <li>In the same pan, sauté garlic and sun-dried tomatoes 1 minute.</li>
+        <li>Add heavy cream and broth. Simmer and stir in parmesan until sauce thickens, about 3 minutes.</li>
+        <li>Add spinach and stir until wilted. Return chicken to the pan and spoon sauce over top.</li>
+        <li>Garnish with fresh basil. Serve over pasta or mashed potatoes.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">520</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">42g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">8g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">35g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">1g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">580mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fef3c7">🍯</div>
+  <div class="recipe-header">
+    <h2>Honey Garlic Chicken</h2>
+    <div class="recipe-meta"><span>⏱ 25 min</span><span>Serves 4</span><span class="tag tag-chicken">Chicken</span></div>
+  </div>
+  <div class="recipe-desc">Sweet, sticky, and savory glaze with just a touch of heat. Perfect over steamed rice for a quick weeknight dinner.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-ld3" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$10.50 (~$2.65/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>4 boneless chicken thighs</td><td>$5.50</td></tr>
+        <tr><td>3 tbsp honey</td><td>$0.45</td></tr>
+        <tr><td>2 tbsp soy sauce</td><td>$0.20</td></tr>
+        <tr><td>3 cloves garlic</td><td>$0.20</td></tr>
+        <tr><td>1 tbsp rice vinegar</td><td>$0.15</td></tr>
+        <tr><td>1 tsp cornstarch + water</td><td>$0.05</td></tr>
+        <tr><td>Sesame seeds &amp; green onions</td><td>$0.30</td></tr>
+        <tr><td>1 tbsp vegetable oil</td><td>$0.10</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Season chicken with salt, pepper, and garlic powder. Sear in oil 5–6 min per side until golden. Remove.</li>
+        <li>Sauté garlic 30 seconds. Whisk together honey, soy sauce, and rice vinegar; add to pan.</li>
+        <li>Stir in cornstarch slurry and simmer until thickened, 1–2 minutes.</li>
+        <li>Return chicken and toss to coat in glaze. Garnish with sesame seeds and green onions. Serve over rice.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">340</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">32g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">18g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">14g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">0g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">520mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fef3c7">🥧</div>
+  <div class="recipe-header">
+    <h2>Classic Chicken Pot Pie</h2>
+    <div class="recipe-meta"><span>⏱ 1 hr 10 min</span><span>Serves 6</span><span class="tag tag-chicken">Chicken</span></div>
+  </div>
+  <div class="recipe-desc">Flaky golden crust over a creamy vegetable and chicken filling — the ultimate comfort food dinner.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-ld4" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$14.00 (~$2.35/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>2 store-bought pie crusts</td><td>$3.50</td></tr>
+        <tr><td>2 cups cooked chicken, cubed</td><td>$4.00</td></tr>
+        <tr><td>1 cup frozen peas</td><td>$0.60</td></tr>
+        <tr><td>2 carrots + 2 celery stalks</td><td>$0.70</td></tr>
+        <tr><td>1 small onion</td><td>$0.40</td></tr>
+        <tr><td>4 tbsp butter + 1/3 cup flour</td><td>$0.50</td></tr>
+        <tr><td>1 3/4 cups chicken broth</td><td>$0.90</td></tr>
+        <tr><td>2/3 cup whole milk + egg wash</td><td>$0.50</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Preheat oven to 425°F. Line a 9-inch pie dish with one crust.</li>
+        <li>Sauté onion, carrot, and celery in butter 5 minutes. Stir in flour and cook 1 minute.</li>
+        <li>Whisk in broth and milk. Simmer until thickened. Season with salt, pepper, and thyme.</li>
+        <li>Remove from heat; stir in chicken and peas. Pour into crust.</li>
+        <li>Top with second crust, seal edges, cut vents, and brush with egg wash.</li>
+        <li>Bake 30–35 minutes until deep golden. Cool 10 minutes before slicing.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">480</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">22g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">42g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">24g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">3g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">640mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fee2e2">🌮</div>
+  <div class="recipe-header">
+    <h2>Classic Beef Tacos</h2>
+    <div class="recipe-meta"><span>⏱ 20 min</span><span>Serves 4</span><span class="tag tag-beef">Ground Beef</span></div>
+  </div>
+  <div class="recipe-desc">Seasoned ground beef in crispy shells with all your favorite toppings. A weeknight staple the whole family loves.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-ld5" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$11.00 (~$2.75/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>1 lb ground beef (80/20)</td><td>$5.50</td></tr>
+        <tr><td>1 packet taco seasoning</td><td>$0.80</td></tr>
+        <tr><td>8 taco shells</td><td>$2.00</td></tr>
+        <tr><td>Shredded lettuce + diced tomato</td><td>$0.80</td></tr>
+        <tr><td>Shredded cheddar cheese</td><td>$0.80</td></tr>
+        <tr><td>Sour cream &amp; salsa</td><td>$0.80</td></tr>
+        <tr><td>1 small onion + 2 cloves garlic</td><td>$0.40</td></tr>
+        <tr><td>1/4 cup water</td><td>—</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Cook ground beef over medium-high heat, breaking up, until browned. Drain fat.</li>
+        <li>Add diced onion and garlic; cook 2–3 minutes. Add taco seasoning and water; simmer until thickened.</li>
+        <li>Warm taco shells per package directions. Fill with beef and top with desired toppings. Serve immediately.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">420</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">26g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">28g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">22g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">2g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">680mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fee2e2">🍝</div>
+  <div class="recipe-header">
+    <h2>Spaghetti Bolognese</h2>
+    <div class="recipe-meta"><span>⏱ 45 min</span><span>Serves 5</span><span class="tag tag-beef">Ground Beef</span></div>
+  </div>
+  <div class="recipe-desc">Slow-simmered rich meat sauce clinging to al dente spaghetti. A family dinner classic.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-ld6" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$14.00 (~$2.80/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>1 lb ground beef</td><td>$5.50</td></tr>
+        <tr><td>1 lb spaghetti</td><td>$1.50</td></tr>
+        <tr><td>1 can (28 oz) crushed tomatoes</td><td>$2.00</td></tr>
+        <tr><td>2 tbsp tomato paste</td><td>$0.30</td></tr>
+        <tr><td>1/2 cup beef broth</td><td>$0.50</td></tr>
+        <tr><td>Onion, garlic, olive oil</td><td>$0.60</td></tr>
+        <tr><td>Oregano, basil, S&amp;P</td><td>$0.20</td></tr>
+        <tr><td>Parmesan to serve</td><td>$1.00</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Sauté onion 4 minutes in olive oil; add garlic 1 minute. Add beef and brown; drain fat.</li>
+        <li>Stir in tomato paste 1 minute. Add crushed tomatoes, broth, oregano, and basil.</li>
+        <li>Simmer uncovered on low 25–30 minutes. Season with salt and pepper.</li>
+        <li>Cook spaghetti in salted water until al dente. Reserve pasta water. Drain and toss with sauce. Serve with parmesan.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">530</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">30g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">62g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">16g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">4g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">510mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#dcfce7">🫑</div>
+  <div class="recipe-header">
+    <h2>Stuffed Bell Peppers</h2>
+    <div class="recipe-meta"><span>⏱ 55 min</span><span>Serves 4</span><span class="tag tag-beef">Ground Beef</span></div>
+  </div>
+  <div class="recipe-desc">Colorful peppers packed with seasoned beef, rice, and melted cheese on top. A complete meal in one beautiful package.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-ld7" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$13.00 (~$3.25/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>4 large bell peppers</td><td>$3.00</td></tr>
+        <tr><td>1 lb ground beef</td><td>$5.50</td></tr>
+        <tr><td>1 cup cooked rice</td><td>$0.40</td></tr>
+        <tr><td>1 can diced tomatoes</td><td>$1.20</td></tr>
+        <tr><td>Onion, garlic</td><td>$0.40</td></tr>
+        <tr><td>Cumin, smoked paprika</td><td>$0.15</td></tr>
+        <tr><td>1 cup shredded cheddar</td><td>$1.80</td></tr>
+        <tr><td>Salt and pepper</td><td>$0.05</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Preheat oven to 375°F. Place peppers cut-side up in a baking dish.</li>
+        <li>Brown beef; drain. Add onion, garlic, tomatoes, rice, and spices. Simmer 5 minutes.</li>
+        <li>Fill peppers, cover with foil, bake 30 minutes. Top with cheese and bake uncovered 10 more minutes.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">450</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">32g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">26g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">24g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">4g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">590mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fee2e2">🍲</div>
+  <div class="recipe-header">
+    <h2>Classic Beef Chili</h2>
+    <div class="recipe-meta"><span>⏱ 1 hr</span><span>Serves 6</span><span class="tag tag-beef">Ground Beef</span></div>
+  </div>
+  <div class="recipe-desc">Hearty, smoky, and deeply spiced chili with kidney beans — even better the next day.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-ld8" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$14.50 (~$2.40/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>1.5 lbs ground beef</td><td>$8.25</td></tr>
+        <tr><td>1 can (28 oz) crushed tomatoes</td><td>$2.00</td></tr>
+        <tr><td>1 can kidney beans</td><td>$1.00</td></tr>
+        <tr><td>1 can tomato paste</td><td>$0.60</td></tr>
+        <tr><td>Onion, bell pepper, garlic</td><td>$0.80</td></tr>
+        <tr><td>Chili powder, cumin, paprika</td><td>$0.25</td></tr>
+        <tr><td>1 cup beef broth</td><td>$0.80</td></tr>
+        <tr><td>Toppings (sour cream, cheese)</td><td>$1.00</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Brown beef in large pot; drain fat. Add onion, pepper, and garlic; cook 4 minutes.</li>
+        <li>Stir in tomato paste 1 minute. Add tomatoes, beans, broth, and spices. Stir well.</li>
+        <li>Bring to boil; reduce to low and simmer uncovered 35–40 minutes. Adjust seasoning. Serve with toppings.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">410</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">34g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">22g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">20g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">7g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">720mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#d1fae5">🐟</div>
+  <div class="recipe-header">
+    <h2>Lemon Herb Baked Salmon</h2>
+    <div class="recipe-meta"><span>⏱ 25 min</span><span>Serves 4</span><span class="tag tag-seafood">Seafood</span></div>
+  </div>
+  <div class="recipe-desc">Flaky, tender salmon fillets baked with a bright lemon, garlic, and herb crust. Light, healthy, and incredibly fast.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-ld9" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$22.00 (~$5.50/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>4 salmon fillets (6 oz each)</td><td>$16.00</td></tr>
+        <tr><td>2 tbsp olive oil</td><td>$0.30</td></tr>
+        <tr><td>3 cloves garlic, minced</td><td>$0.20</td></tr>
+        <tr><td>Juice + zest of 1 lemon</td><td>$0.50</td></tr>
+        <tr><td>1 tsp dried dill + parsley</td><td>$0.20</td></tr>
+        <tr><td>Salt and black pepper</td><td>$0.05</td></tr>
+        <tr><td>Lemon slices for garnish</td><td>$0.30</td></tr>
+        <tr><td>Fresh parsley</td><td>$0.30</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Preheat oven to 400°F (200°C). Line a baking sheet with foil and lightly oil.</li>
+        <li>Mix olive oil, garlic, lemon juice, lemon zest, dill, and parsley in a small bowl.</li>
+        <li>Place salmon skin-side down on the baking sheet. Season with salt and pepper.</li>
+        <li>Spoon herb mixture evenly over each fillet. Top with lemon slices.</li>
+        <li>Bake 12–15 minutes until salmon flakes easily with a fork.</li>
+        <li>Garnish with fresh parsley and serve with rice or roasted vegetables.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">350</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">40g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">2g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">19g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">0g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">310mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#d1fae5">🦐</div>
+  <div class="recipe-header">
+    <h2>Garlic Shrimp Stir Fry</h2>
+    <div class="recipe-meta"><span>⏱ 20 min</span><span>Serves 4</span><span class="tag tag-seafood">Seafood</span></div>
+  </div>
+  <div class="recipe-desc">Plump, juicy shrimp tossed with colorful vegetables in a savory ginger-garlic sauce. On the table in 20 minutes flat.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-ld10" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$18.00 (~$4.50/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>1.5 lbs large shrimp, peeled</td><td>$12.00</td></tr>
+        <tr><td>2 cups broccoli florets</td><td>$1.50</td></tr>
+        <tr><td>1 red bell pepper, sliced</td><td>$1.00</td></tr>
+        <tr><td>3 cloves garlic + 1 tsp ginger</td><td>$0.30</td></tr>
+        <tr><td>3 tbsp soy sauce</td><td>$0.25</td></tr>
+        <tr><td>1 tbsp oyster sauce</td><td>$0.30</td></tr>
+        <tr><td>1 tsp sesame oil</td><td>$0.25</td></tr>
+        <tr><td>1 tbsp vegetable oil</td><td>$0.10</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Mix soy sauce, oyster sauce, and sesame oil in a small bowl. Set aside.</li>
+        <li>Heat vegetable oil in a wok or large skillet over high heat until smoking.</li>
+        <li>Add broccoli and bell pepper; stir fry 3–4 minutes until crisp-tender. Remove.</li>
+        <li>Add more oil if needed. Add garlic and ginger; stir fry 30 seconds.</li>
+        <li>Add shrimp in a single layer; cook 1–2 minutes per side until pink and curled.</li>
+        <li>Return vegetables to the wok. Pour sauce over everything and toss 1 minute.</li>
+        <li>Serve over steamed rice or noodles.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">280</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">38g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">8g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">9g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">2g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">820mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fce7f3">🥩</div>
+  <div class="recipe-header">
+    <h2>Herb-Crusted Pork Tenderloin</h2>
+    <div class="recipe-meta"><span>⏱ 40 min</span><span>Serves 4</span><span class="tag tag-pork">Pork</span></div>
+  </div>
+  <div class="recipe-desc">A juicy, tender pork loin coated in a savory garlic and herb crust, seared on the stovetop and finished in the oven to perfection.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-ld11" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$14.00 (~$3.50/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>1.5 lb pork tenderloin</td><td>$8.00</td></tr>
+        <tr><td>3 cloves garlic, minced</td><td>$0.20</td></tr>
+        <tr><td>1 tbsp fresh rosemary + thyme</td><td>$0.40</td></tr>
+        <tr><td>2 tbsp olive oil</td><td>$0.30</td></tr>
+        <tr><td>1 tsp Dijon mustard</td><td>$0.15</td></tr>
+        <tr><td>Salt and black pepper</td><td>$0.05</td></tr>
+        <tr><td>1/2 cup chicken broth</td><td>$0.40</td></tr>
+        <tr><td>1 tbsp butter</td><td>$0.15</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Preheat oven to 425°F. Mix garlic, rosemary, thyme, Dijon, olive oil, salt, and pepper into a paste. Rub all over the tenderloin.</li>
+        <li>Heat an oven-safe skillet over high heat. Sear tenderloin on all sides, about 2 minutes per side.</li>
+        <li>Transfer skillet to oven and roast 18–22 minutes until internal temp reaches 145°F.</li>
+        <li>Remove from oven and rest 5 minutes before slicing.</li>
+        <li>Add broth to the skillet, bring to a simmer, swirl in butter to make a quick pan sauce. Drizzle over sliced pork.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">310</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">38g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">2g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">15g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">0g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">370mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#dcfce7">🍚</div>
+  <div class="recipe-header">
+    <h2>Vegetable Fried Rice</h2>
+    <div class="recipe-meta"><span>⏱ 20 min</span><span>Serves 4</span><span class="tag tag-vegetarian">Vegetarian</span></div>
+  </div>
+  <div class="recipe-desc">Better than takeout! Day-old rice fried up with colorful veggies, scrambled eggs, and a rich soy-sesame sauce. A complete meal in one pan.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-ld12" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$7.50 (~$1.90/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>3 cups cooked day-old rice</td><td>$0.60</td></tr>
+        <tr><td>3 large eggs</td><td>$0.90</td></tr>
+        <tr><td>1 cup frozen peas + carrots</td><td>$0.80</td></tr>
+        <tr><td>1 cup corn kernels</td><td>$0.60</td></tr>
+        <tr><td>3 green onions, sliced</td><td>$0.30</td></tr>
+        <tr><td>3 cloves garlic + 1 tsp ginger</td><td>$0.25</td></tr>
+        <tr><td>3 tbsp soy sauce</td><td>$0.25</td></tr>
+        <tr><td>1 tsp sesame oil + veg oil</td><td>$0.20</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Heat a wok or large skillet over high heat with vegetable oil until smoking.</li>
+        <li>Add garlic and ginger; stir fry 30 seconds. Add frozen vegetables; stir fry 2 minutes.</li>
+        <li>Push vegetables to the side. Scramble eggs in the empty space until just set; mix with vegetables.</li>
+        <li>Add cold rice and break up any clumps. Stir fry everything together 3–4 minutes until rice is lightly toasted.</li>
+        <li>Pour in soy sauce and sesame oil; toss well. Top with green onions and serve.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">320</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">12g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">52g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">8g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">3g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">610mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fef9c3">🌯</div>
+  <div class="recipe-header">
+    <h2>Grilled Chicken Caesar Wrap</h2>
+    <div class="recipe-meta"><span>⏱ 20 min</span><span>Serves 2</span><span class="tag tag-chicken">Chicken</span></div>
+  </div>
+  <div class="recipe-desc">Juicy grilled chicken, crisp romaine, parmesan, and creamy Caesar dressing wrapped in a warm flour tortilla. The perfect lunch.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-ld13" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$9.00 (~$4.50/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>2 chicken breasts</td><td>$4.00</td></tr>
+        <tr><td>2 large flour tortillas</td><td>$0.60</td></tr>
+        <tr><td>2 cups romaine lettuce, chopped</td><td>$1.00</td></tr>
+        <tr><td>1/3 cup Caesar dressing</td><td>$0.80</td></tr>
+        <tr><td>1/4 cup parmesan, shaved</td><td>$0.60</td></tr>
+        <tr><td>1/2 cup croutons, crushed</td><td>$0.30</td></tr>
+        <tr><td>Italian seasoning, olive oil</td><td>$0.20</td></tr>
+        <tr><td>Salt and pepper</td><td>$0.05</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Season chicken with Italian seasoning, salt, pepper, and olive oil. Grill or pan-sear 5–6 minutes per side until cooked through. Rest 5 minutes, then slice thin.</li>
+        <li>Warm tortillas in a dry pan or microwave 30 seconds.</li>
+        <li>Toss romaine with Caesar dressing. Lay on each tortilla.</li>
+        <li>Top with sliced chicken, parmesan, and crushed croutons.</li>
+        <li>Fold the sides in, then roll up tightly. Slice in half diagonally and serve.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">490</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">42g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">34g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">20g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">2g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">760mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fee2e2">🍅</div>
+  <div class="recipe-header">
+    <h2>Creamy Tomato Basil Pasta</h2>
+    <div class="recipe-meta"><span>⏱ 25 min</span><span>Serves 4</span><span class="tag tag-pasta">Pasta</span></div>
+  </div>
+  <div class="recipe-desc">A rich, velvety tomato cream sauce tossed with penne and fresh basil. Vegetarian, quick, and endlessly comforting.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-ld14" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$9.00 (~$2.25/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>12 oz penne pasta</td><td>$1.50</td></tr>
+        <tr><td>1 can (28 oz) crushed tomatoes</td><td>$2.00</td></tr>
+        <tr><td>3/4 cup heavy cream</td><td>$1.00</td></tr>
+        <tr><td>4 cloves garlic</td><td>$0.25</td></tr>
+        <tr><td>1/2 cup parmesan, grated</td><td>$1.00</td></tr>
+        <tr><td>Fresh basil (large handful)</td><td>$1.00</td></tr>
+        <tr><td>2 tbsp olive oil</td><td>$0.30</td></tr>
+        <tr><td>Red pepper flakes, S&amp;P</td><td>$0.10</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Cook penne in salted boiling water until al dente. Reserve 1/2 cup pasta water; drain.</li>
+        <li>Heat olive oil over medium heat. Sauté garlic and red pepper flakes 1 minute.</li>
+        <li>Add crushed tomatoes and simmer 10 minutes. Stir in heavy cream and simmer 3 more minutes.</li>
+        <li>Add parmesan and stir to melt. Season with salt and pepper.</li>
+        <li>Toss in pasta, adding pasta water to loosen as needed. Stir in torn fresh basil. Serve immediately.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">490</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">15g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">62g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">20g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">4g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">480mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#dcfce7">🥬</div>
+  <div class="recipe-header">
+    <h2>Asian Ground Turkey Lettuce Wraps</h2>
+    <div class="recipe-meta"><span>⏱ 20 min</span><span>Serves 4</span><span class="tag tag-vegetarian">Turkey</span></div>
+  </div>
+  <div class="recipe-desc">Savory, lightly spiced ground turkey in crisp iceberg lettuce cups with water chestnuts and a bold hoisin-soy sauce. Light but filling.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-ld15" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$12.00 (~$3.00/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>1 lb ground turkey</td><td>$5.00</td></tr>
+        <tr><td>1 head iceberg lettuce</td><td>$1.50</td></tr>
+        <tr><td>1 can water chestnuts, drained</td><td>$1.50</td></tr>
+        <tr><td>3 tbsp hoisin sauce</td><td>$0.60</td></tr>
+        <tr><td>2 tbsp soy sauce</td><td>$0.20</td></tr>
+        <tr><td>1 tsp sesame oil</td><td>$0.25</td></tr>
+        <tr><td>Garlic, ginger, green onions</td><td>$0.50</td></tr>
+        <tr><td>Shredded carrots for serving</td><td>$0.50</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Cook ground turkey in a skillet over medium-high heat until browned. Drain any excess fat.</li>
+        <li>Add garlic and ginger; cook 1 minute. Stir in diced water chestnuts.</li>
+        <li>Mix hoisin sauce, soy sauce, and sesame oil; pour over turkey. Toss to coat and cook 2 minutes.</li>
+        <li>Carefully separate large lettuce leaves to form cups.</li>
+        <li>Spoon filling into lettuce cups. Top with shredded carrot and green onions. Serve immediately.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">290</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">30g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">16g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">10g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">2g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">640mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<h2 class="category-heading" id="desserts">Desserts</h2>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#1f2328;color:#fff">🍫</div>
+  <div class="recipe-header">
+    <h2>Chocolate Lava Cakes</h2>
+    <div class="recipe-meta"><span>⏱ 20 min</span><span>Serves 4</span><span class="tag tag-dessert">Dessert</span></div>
+  </div>
+  <div class="recipe-desc">Warm, fudgy cakes with a molten chocolate center. Impressive enough for guests, easy enough for any night.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-d1" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$8.00 (~$2.00/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>6 oz semi-sweet chocolate</td><td>$2.50</td></tr>
+        <tr><td>1/2 cup unsalted butter</td><td>$0.80</td></tr>
+        <tr><td>1 cup powdered sugar</td><td>$0.30</td></tr>
+        <tr><td>2 large eggs + 2 yolks</td><td>$0.80</td></tr>
+        <tr><td>1 tsp vanilla extract</td><td>$0.15</td></tr>
+        <tr><td>6 tbsp all-purpose flour</td><td>$0.10</td></tr>
+        <tr><td>Pinch of salt</td><td>$0.02</td></tr>
+        <tr><td>Vanilla ice cream to serve</td><td>$1.50</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Preheat oven to 425°F. Grease four 6-oz ramekins; dust with cocoa powder.</li>
+        <li>Melt chocolate and butter together in 30-second microwave bursts, stirring until smooth.</li>
+        <li>Whisk in powdered sugar. Add eggs, yolks, and vanilla; mix well. Stir in flour and salt.</li>
+        <li>Divide batter among ramekins. Bake 12–13 minutes — edges set, center jiggles.</li>
+        <li>Cool 1 minute, run knife around edges, invert onto plates. Serve immediately with ice cream.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">540</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">8g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">62g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">30g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">2g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">180mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fef9c3">🍌</div>
+  <div class="recipe-header">
+    <h2>Classic Banana Pudding</h2>
+    <div class="recipe-meta"><span>⏱ 15 min + chill</span><span>Serves 8</span><span class="tag tag-dessert">Dessert</span></div>
+  </div>
+  <div class="recipe-desc">Layers of vanilla wafers, fresh banana, and creamy pudding topped with whipped cream. A beloved Southern classic.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-d2" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$12.00 (~$1.50/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>2 boxes instant vanilla pudding</td><td>$2.50</td></tr>
+        <tr><td>3 cups cold whole milk</td><td>$1.20</td></tr>
+        <tr><td>8 oz cream cheese, softened</td><td>$2.00</td></tr>
+        <tr><td>1 can sweetened condensed milk</td><td>$2.00</td></tr>
+        <tr><td>8 oz whipped topping</td><td>$1.50</td></tr>
+        <tr><td>4 ripe bananas, sliced</td><td>$1.00</td></tr>
+        <tr><td>1 box Nilla wafers</td><td>$3.00</td></tr>
+        <tr><td>—</td><td>—</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Beat cream cheese until smooth. Beat in condensed milk until combined.</li>
+        <li>In another bowl, whisk pudding mix with cold milk 2 minutes until thickened. Fold into cream cheese mixture. Fold in half the whipped topping.</li>
+        <li>Layer wafers, banana slices, and pudding in a 9x13 dish. Repeat layers.</li>
+        <li>Top with remaining whipped topping and crushed wafers. Refrigerate at least 4 hours. Serve cold.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">420</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">7g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">62g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">16g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">1g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">310mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fef3c7">🍪</div>
+  <div class="recipe-header">
+    <h2>Brown Butter Chocolate Chip Cookies</h2>
+    <div class="recipe-meta"><span>⏱ 30 min</span><span>Makes 24</span><span class="tag tag-dessert">Dessert</span></div>
+  </div>
+  <div class="recipe-desc">Nutty browned butter adds incredible depth to these thick, chewy chocolate chip cookies. The best cookies you'll ever make.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-d3" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$7.50 (~$0.31/cookie)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>2 1/4 cups all-purpose flour</td><td>$0.45</td></tr>
+        <tr><td>1 cup (2 sticks) unsalted butter</td><td>$1.60</td></tr>
+        <tr><td>3/4 cup granulated + 3/4 cup brown sugar</td><td>$0.60</td></tr>
+        <tr><td>2 large eggs</td><td>$0.60</td></tr>
+        <tr><td>2 tsp vanilla extract</td><td>$0.30</td></tr>
+        <tr><td>1 tsp baking soda + 1 tsp salt</td><td>$0.10</td></tr>
+        <tr><td>2 cups semi-sweet chocolate chips</td><td>$3.00</td></tr>
+        <tr><td>Flaky sea salt for topping</td><td>$0.20</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Preheat oven to 375°F. Line baking sheets with parchment.</li>
+        <li>Brown butter in a saucepan over medium heat, stirring constantly, 5–7 minutes until golden and nutty. Cool 10 minutes.</li>
+        <li>Whisk sugars into butter. Add eggs and vanilla; whisk vigorously until glossy.</li>
+        <li>Stir in flour, baking soda, and salt until just combined. Fold in chocolate chips.</li>
+        <li>Scoop rounded tablespoons onto sheets 2 inches apart. Bake 9–11 minutes until edges are golden. Sprinkle with sea salt. Cool 5 minutes before transferring.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per cookie)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">195</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">2g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">24g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">10g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">1g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">120mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fdf2f8">🍓</div>
+  <div class="recipe-header">
+    <h2>No-Bake Strawberry Cheesecake</h2>
+    <div class="recipe-meta"><span>⏱ 20 min + chill</span><span>Serves 8</span><span class="tag tag-dessert">Dessert</span></div>
+  </div>
+  <div class="recipe-desc">A buttery graham cracker crust with a luscious cream cheese filling and fresh strawberry topping. No oven required.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-d4" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$14.00 (~$1.75/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>2 cups graham cracker crumbs</td><td>$1.50</td></tr>
+        <tr><td>6 tbsp butter, melted</td><td>$0.90</td></tr>
+        <tr><td>2 blocks (8 oz ea) cream cheese</td><td>$4.00</td></tr>
+        <tr><td>1/2 cup powdered sugar</td><td>$0.30</td></tr>
+        <tr><td>1 tsp vanilla extract</td><td>$0.15</td></tr>
+        <tr><td>1 cup heavy whipping cream</td><td>$1.50</td></tr>
+        <tr><td>1 lb fresh strawberries</td><td>$3.00</td></tr>
+        <tr><td>3 tbsp strawberry jam, warmed</td><td>$0.50</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Mix graham crumbs, melted butter, and 2 tbsp sugar. Press into a 9-inch springform pan. Refrigerate 15 minutes.</li>
+        <li>Beat cream cheese, powdered sugar, and vanilla until smooth. Fold in whipped cream until just combined.</li>
+        <li>Pour filling over crust. Refrigerate 4–6 hours or overnight until firmly set.</li>
+        <li>Toss strawberries with warmed jam. Arrange on top of cheesecake. Release springform, slice, and serve.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">460</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">6g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">36g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">33g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">1g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">260mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fef3c7">🍎</div>
+  <div class="recipe-header">
+    <h2>Classic Apple Crisp</h2>
+    <div class="recipe-meta"><span>⏱ 50 min</span><span>Serves 8</span><span class="tag tag-dessert">Dessert</span></div>
+  </div>
+  <div class="recipe-desc">Tender cinnamon-spiced apples under a buttery, crunchy oat topping. Serve warm with a scoop of vanilla ice cream for pure fall comfort.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-d5" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$9.00 (~$1.13/serving)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>6 medium apples, peeled &amp; sliced</td><td>$3.00</td></tr>
+        <tr><td>2 tbsp sugar + 1 tsp cinnamon</td><td>$0.20</td></tr>
+        <tr><td>1 cup rolled oats</td><td>$0.40</td></tr>
+        <tr><td>1/2 cup all-purpose flour</td><td>$0.15</td></tr>
+        <tr><td>1/2 cup packed brown sugar</td><td>$0.30</td></tr>
+        <tr><td>1/2 tsp cinnamon + 1/4 tsp nutmeg</td><td>$0.10</td></tr>
+        <tr><td>1/4 tsp salt</td><td>$0.02</td></tr>
+        <tr><td>6 tbsp cold butter, cubed</td><td>$0.90</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Preheat oven to 350°F. Toss apple slices with sugar and 1 tsp cinnamon. Spread in a greased 9x13 baking dish.</li>
+        <li>Mix oats, flour, brown sugar, cinnamon, nutmeg, and salt. Work in cold butter with fingertips until mixture resembles coarse crumbs.</li>
+        <li>Sprinkle topping evenly over apples.</li>
+        <li>Bake 35–40 minutes until topping is golden brown and apples are bubbling and tender.</li>
+        <li>Serve warm with vanilla ice cream or whipped cream.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per serving)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">280</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">3g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">46g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">10g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">3g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">90mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#292524;color:#fff">🟫</div>
+  <div class="recipe-header">
+    <h2>Fudgy Scratch Brownies</h2>
+    <div class="recipe-meta"><span>⏱ 35 min</span><span>Makes 16</span><span class="tag tag-dessert">Dessert</span></div>
+  </div>
+  <div class="recipe-desc">Dense, intensely chocolatey brownies with a crinkle top and fudgy center. Made entirely from scratch with pantry staples.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-d6" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$6.50 (~$0.41/brownie)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>1/2 cup (1 stick) unsalted butter</td><td>$0.80</td></tr>
+        <tr><td>1 cup granulated sugar</td><td>$0.25</td></tr>
+        <tr><td>2 large eggs</td><td>$0.60</td></tr>
+        <tr><td>1 tsp vanilla extract</td><td>$0.15</td></tr>
+        <tr><td>1/3 cup unsweetened cocoa powder</td><td>$0.50</td></tr>
+        <tr><td>1/2 cup all-purpose flour</td><td>$0.15</td></tr>
+        <tr><td>1/4 tsp salt + 1/4 tsp baking powder</td><td>$0.05</td></tr>
+        <tr><td>1/2 cup chocolate chips (opt)</td><td>$0.75</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Preheat oven to 350°F. Grease an 8x8 inch baking pan and line with parchment.</li>
+        <li>Melt butter in a saucepan over low heat or in the microwave. Remove from heat and stir in sugar.</li>
+        <li>Beat in eggs and vanilla. Stir in cocoa powder, flour, salt, and baking powder until just combined.</li>
+        <li>Fold in chocolate chips if using. Pour into prepared pan and spread evenly.</li>
+        <li>Bake 25–28 minutes until a toothpick inserted in the center comes out with a few moist crumbs.</li>
+        <li>Cool completely in pan before cutting into 16 squares.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per brownie)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">155</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">2g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">22g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">7g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">1g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">65mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="recipe">
+  <div class="recipe-img-placeholder" style="background:#fef9c3">🍋</div>
+  <div class="recipe-header">
+    <h2>Classic Lemon Bars</h2>
+    <div class="recipe-meta"><span>⏱ 1 hr</span><span>Makes 16</span><span class="tag tag-dessert">Dessert</span></div>
+  </div>
+  <div class="recipe-desc">A buttery shortbread crust under a bright, tangy, perfectly set lemon curd filling. Dusted with powdered sugar and irresistible.</div>
+  <div class="recipe-actions">
+    <div class="star-rating"><span>Your Rating:</span><div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></div>
+    <div class="made-it"><input type="checkbox" id="made-d7" /><label>I've made this!</label></div>
+  </div>
+  <span class="cost-badge">Estimated Meal Cost: ~$6.00 (~$0.38/bar)</span>
+  <div class="recipe-body">
+    <div class="ingredients">
+      <h3>Ingredients</h3>
+      <table>
+        <tr><th>Item</th><th>Cost</th></tr>
+        <tr><td>1 cup all-purpose flour</td><td>$0.20</td></tr>
+        <tr><td>1/2 cup butter, softened</td><td>$0.80</td></tr>
+        <tr><td>1/4 cup powdered sugar (crust)</td><td>$0.15</td></tr>
+        <tr><td>2 large eggs</td><td>$0.60</td></tr>
+        <tr><td>1 cup granulated sugar (filling)</td><td>$0.25</td></tr>
+        <tr><td>2 tbsp all-purpose flour (filling)</td><td>$0.05</td></tr>
+        <tr><td>Juice + zest of 2 lemons</td><td>$1.00</td></tr>
+        <tr><td>Powdered sugar for dusting</td><td>$0.15</td></tr>
+      </table>
+    </div>
+    <div class="instructions">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Preheat oven to 350°F. Mix flour, butter, and 1/4 cup powdered sugar until it forms a dough. Press into greased 8x8 pan. Bake 15–18 minutes until lightly golden.</li>
+        <li>Meanwhile, whisk together eggs, granulated sugar, 2 tbsp flour, lemon juice, and zest until smooth.</li>
+        <li>Pour lemon filling over the hot crust and return to the oven.</li>
+        <li>Bake 20–25 minutes until filling is set (no jiggle).</li>
+        <li>Cool completely, then refrigerate at least 1 hour. Dust with powdered sugar and cut into 16 bars.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="nutrition-bar">
+    <h3>Nutrition Facts (per bar)</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item"><div class="nut-val">160</div><div class="nut-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nut-val">2g</div><div class="nut-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nut-val">24g</div><div class="nut-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nut-val">7g</div><div class="nut-label">Fat</div></div>
+      <div class="nutrition-item"><div class="nut-val">0g</div><div class="nut-label">Fiber</div></div>
+      <div class="nutrition-item"><div class="nut-val">55mg</div><div class="nut-label">Sodium</div></div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer style="text-align:center;padding:20px;font-size:12px;color:#57606a;border-top:1px solid #e5e7eb">
+  Made with IBM Bob
+</footer>
+
+</body>
+</html>
